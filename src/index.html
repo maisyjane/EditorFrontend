@@ -7,6 +7,7 @@
 
 let wordcountURL = "http://wordcount.editor.qpc.hal.davecutting.uk";
 let charcountURL = "http://charcount.editor.qpc.hal.davecutting.uk";
+let vowelcountURL = "http://vowelcount.40225143.qpc.hal.davecutting.uk"
 
 
 function Wordcount()
@@ -35,6 +36,21 @@ function Charcount()
     };
 
     let url = charcountURL + "/?text=" + encodeURI(document.getElementById('content').value);
+    xhttp.open("GET",url);
+    xhttp.send();
+}
+
+function Vowelcount()
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            document.getElementById('output').value = j.answer;
+        }
+    };
+
+    let url = vowelcountURL + "/?text=" + encodeURI(document.getElementById('content').value);
     xhttp.open("GET",url);
     xhttp.send();
 }
@@ -104,7 +120,7 @@ body  {
         <button class="operation" onclick="Charcount();">Character Count</button>
     </div>
     <div>
-        <button class="operation" onclick="">??</button>
+        <button class="operation" onclick="VowelCount()">Vowel Count</button>
         <button class="operation" onclick="">??</button>
     </div>
     <div>

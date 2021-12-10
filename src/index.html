@@ -3,33 +3,45 @@
 <head>
 <title>QUBeditotron3000</title>
 
-<script type="text/javascript">
-
-let wordcountURL = "http://wordcount.editor.qpc.hal.davecutting.uk";
-let charcountURL = "http://charcount.editor.qpc.hal.davecutting.uk";
-let vowelcountURL = "http://vowelcount.40225143.qpc.hal.davecutting.uk";
-let instancesOfAndURL = "http://instancesofand.40225143.qpc.hal.davecutting.uk";
-let commaCountURL = "http://commacount.40225143.qpc.hal.davecutting.uk";
-let averageWordLengthURL = "http://averagewordlength.40225143.qpc.hal.davecutting.uk";
-let proxyUrl = "http://proxy.40225143.qpc.hal.davecutting.uk/";
-let proxylinks = ["http://proxy.40225143.qpc.hal.davecutting.uk/", "http://deadproxy.40225143.qpc.hal.davecutting.uk/", "http://proxy2.40225143.qpc.hal.davecutting.uk/", "http://proxy3.40225143.qpc.hal.davecutting.uk/"];
-let currentproxylink = "";
+<script type="text/javascript" src="config.js">
 
 
+function disableAllButtons()
+{
+    for(i=0;i<6;i++)
+    {
+        id = String(i);
+        button = document.getElementById(id);
+        button.disabled = true;
+    }
+    
+}
 
+function enableAllButtons()
+{
+    for(i=0;i<6;i++)
+    {
+        id = String(i);
+        button = document.getElementById(id);
+        button.disabled = false;
+    }
+    
+}
 
 function proxy(operation, link)
 {
-    
+    disableAllButtons();
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var j = JSON.parse(this.response);
             if (operation == "andcount"){
                 document.getElementById('output').value = j.Answer; 
+                enableAllButtons();
             }
             else{
                 document.getElementById('output').value = j.answer;
+                enableAllButtons();
             }
             
         }
@@ -40,9 +52,11 @@ function proxy(operation, link)
                 if (operation == "andcount")
                 {
                     alert(j.Text);
+                    enableAllButtons();
                 }
                 else{
                     alert(j.text);
+                    enableAllButtons();
                 }
                 
                 
@@ -55,6 +69,7 @@ function proxy(operation, link)
                 }
                 else{
                     alert("Service is unavailable. Please try again later...");
+                    enableAllButtons();
                 }
             }
             
@@ -70,6 +85,7 @@ function proxy(operation, link)
     else{
         document.getElementById('output').value = "";
         alert("Please enter some text");
+        enableAllButtons();
     }
     
 }
@@ -226,16 +242,16 @@ body  {
         <input type="text" id="output" readonly="1" value="" />
     </div>
     <div>
-        <button class="operation" onclick="proxy('wordcount', proxylinks[0])">Word Count</button>
-        <button class="operation" onclick="proxy('charcount', proxylinks[0]);">Character Count</button>
+        <button class="operation" id="0" onclick="proxy('wordcount', proxylinks[0])">Word Count</button>
+        <button class="operation" id="1" onclick="proxy('charcount', proxylinks[0]);">Character Count</button>
     </div>
     <div>
-        <button class="operation" onclick="proxy('vowelcount', proxylinks[0])">Vowel Count</button>
-        <button class="operation" onclick="proxy('commacount', proxylinks[0])">Comma Count</button>
+        <button class="operation" id="2" onclick="proxy('vowelcount', proxylinks[0])">Vowel Count</button>
+        <button class="operation" id="3" onclick="proxy('commacount', proxylinks[0])">Comma Count</button>
     </div>
     <div>
-        <button class="operation" onclick="proxy('andcount', proxylinks[0])">Instances Of And</button>
-        <button class="operation" onclick="proxy('avgwordlength', proxylinks[0])">Average Word Length</button>
+        <button class="operation" id="4" onclick="proxy('andcount', proxylinks[0])">Instances Of And</button>
+        <button class="operation" id="5" onclick="proxy('avgwordlength', proxylinks[0])">Average Word Length</button>
     </div>
     <div>
         <button class="operation" onclick="">??</button>

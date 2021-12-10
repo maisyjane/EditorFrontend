@@ -12,7 +12,7 @@ let instancesOfAndURL = "http://instancesofand.40225143.qpc.hal.davecutting.uk";
 let commaCountURL = "http://commacount.40225143.qpc.hal.davecutting.uk";
 let averageWordLengthURL = "http://averagewordlength.40225143.qpc.hal.davecutting.uk";
 let proxyUrl = "http://proxy.40225143.qpc.hal.davecutting.uk/";
-let proxylinks = ["http://deadproxy.40225143.qpc.hal.davecutting.uk/" , "http://proxy.40225143.qpc.hal.davecutting.uk/", "http://proxy2.40225143.qpc.hal.davecutting.uk/", "http://proxy3.40225143.qpc.hal.davecutting.uk/"];
+let proxylinks = ["http://proxy.40225143.qpc.hal.davecutting.uk/", "http://deadproxy.40225143.qpc.hal.davecutting.uk/", "http://proxy2.40225143.qpc.hal.davecutting.uk/", "http://proxy3.40225143.qpc.hal.davecutting.uk/"];
 let currentproxylink = "";
 
 
@@ -25,7 +25,7 @@ function proxy(operation, link)
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var j = JSON.parse(this.response);
-            if (operation === "andcount"){
+            if (operation == "andcount"){
                 document.getElementById('output').value = j.Answer; 
             }
             else{
@@ -34,22 +34,44 @@ function proxy(operation, link)
             
         }
         if (this.readyState == 4 && this.status != 200) {
-            proxylinks.splice(0,1);
-            if(proxylinks.length>=1)
-            {
-                proxy(operation, proxylinks[0])
+            var j = this.response;
+            if(String(j).length>0)
+            {   j=JSON.parse(this.response);
+                if (operation == "andcount")
+                {
+                    alert(j.Text);
+                }
+                else{
+                    alert(j.text);
+                }
+                
+                
             }
             else{
-                alert("Service is unavailable. Please try again later...");
+                proxylinks.splice(0,1);
+                if(proxylinks.length>=1)
+                {
+                    proxy(operation, proxylinks[0])
+                }
+                else{
+                    alert("Service is unavailable. Please try again later...");
+                }
             }
             
         }
         
     };
-
-    url = link + operation + "/?x=" + encodeURI(document.getElementById('content').value);
-    xhttp.open("GET",url);
-    xhttp.send();
+    if(encodeURI(document.getElementById('content').value)!="")
+    {
+        url = link + operation + "/?x=" + encodeURI(document.getElementById('content').value);
+        xhttp.open("GET",url);
+        xhttp.send();
+    }
+    else{
+        document.getElementById('output').value = "";
+        alert("Please enter some text");
+    }
+    
 }
     
 

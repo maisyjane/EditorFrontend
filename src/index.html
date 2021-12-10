@@ -7,8 +7,51 @@
 
 let wordcountURL = "http://wordcount.editor.qpc.hal.davecutting.uk";
 let charcountURL = "http://charcount.editor.qpc.hal.davecutting.uk";
-let vowelcountURL = "http://vowelcount.40225143.qpc.hal.davecutting.uk"
+let vowelcountURL = "http://vowelcount.40225143.qpc.hal.davecutting.uk";
+let instancesOfAndURL = "http://instancesofand.40225143.qpc.hal.davecutting.uk";
+let commaCountURL = "http://commacount.40225143.qpc.hal.davecutting.uk";
+let averageWordLengthURL = "http://averagewordlength.40225143.qpc.hal.davecutting.uk";
+let proxyUrl = "http://proxy.40225143.qpc.hal.davecutting.uk/";
+let proxylinks = ["http://deadproxy.40225143.qpc.hal.davecutting.uk/" , "http://proxy.40225143.qpc.hal.davecutting.uk/", "http://proxy2.40225143.qpc.hal.davecutting.uk/", "http://proxy3.40225143.qpc.hal.davecutting.uk/"];
+let currentproxylink = "";
 
+
+
+
+function proxy(operation, link)
+{
+    
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            if (operation === "andcount"){
+                document.getElementById('output').value = j.Answer; 
+            }
+            else{
+                document.getElementById('output').value = j.answer;
+            }
+            
+        }
+        if (this.readyState == 4 && this.status != 200) {
+            proxylinks.splice(0,1);
+            if(proxylinks.length>=1)
+            {
+                proxy(operation, proxylinks[0])
+            }
+            else{
+                alert("Service is unavailable. Please try again later...");
+            }
+            
+        }
+        
+    };
+
+    url = link + operation + "/?x=" + encodeURI(document.getElementById('content').value);
+    xhttp.open("GET",url);
+    xhttp.send();
+}
+    
 
 function Wordcount()
 {
@@ -46,11 +89,56 @@ function Vowelcount()
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var j = JSON.parse(this.response);
-            document.getElementById('output').value = j.answer;
+            document.getElementById('output').value = j.Vowels;
         }
     };
 
-    let url = vowelcountURL + "/?text=" + encodeURI(document.getElementById('content').value);
+    let url = vowelcountURL + "/?x=" + encodeURI(document.getElementById('content').value);
+    xhttp.open("GET",url);
+    xhttp.send();
+}
+
+function Commacount()
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            document.getElementById('output').value = j.Commas;
+        }
+    };
+
+    let url = commaCountURL + "/?x=" + encodeURI(document.getElementById('content').value);
+    xhttp.open("GET",url);
+    xhttp.send();
+}
+
+function InstancesOfAnd()
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            document.getElementById('output').value = j.InstancesOfAnd;
+        }
+    };
+
+    let url = instancesOfAndURL + "/?x=" + encodeURI(document.getElementById('content').value);
+    xhttp.open("GET",url);
+    xhttp.send();
+}
+
+function AverageWordLength()
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            document.getElementById('output').value = j.averageWordLength;
+        }
+    };
+
+    let url = averageWordLengthURL + "/" + encodeURI(document.getElementById('content').value);
     xhttp.open("GET",url);
     xhttp.send();
 }
@@ -116,16 +204,16 @@ body  {
         <input type="text" id="output" readonly="1" value="" />
     </div>
     <div>
-        <button class="operation" onclick="Wordcount();">Word Count</button>
-        <button class="operation" onclick="Charcount();">Character Count</button>
+        <button class="operation" onclick="proxy('wordcount', proxylinks[0])">Word Count</button>
+        <button class="operation" onclick="proxy('charcount', proxylinks[0]);">Character Count</button>
     </div>
     <div>
-        <button class="operation" onclick="VowelCount()">Vowel Count</button>
-        <button class="operation" onclick="">??</button>
+        <button class="operation" onclick="proxy('vowelcount', proxylinks[0])">Vowel Count</button>
+        <button class="operation" onclick="proxy('commacount', proxylinks[0])">Comma Count</button>
     </div>
     <div>
-        <button class="operation" onclick="">??</button>
-        <button class="operation" onclick="">??</button>
+        <button class="operation" onclick="proxy('andcount', proxylinks[0])">Instances Of And</button>
+        <button class="operation" onclick="proxy('avgwordlength', proxylinks[0])">Average Word Length</button>
     </div>
     <div>
         <button class="operation" onclick="">??</button>

@@ -2,8 +2,28 @@
 <html>
 <head>
 <title>QUBeditotron3000</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
 
-<script type="text/javascript" src="config.js">
+  const firebaseConfig = {
+    apiKey: "AIzaSyDPGBs1FBV_8IAc0rh7fS98oAQ6142X7y8",
+    authDomain: "stateful-saving.firebaseapp.com",
+    projectId: "stateful-saving",
+    storageBucket: "stateful-saving.appspot.com",
+    messagingSenderId: "401125256015",
+    appId: "1:401125256015:web:078ef66eef117c7d58f33a",
+    measurementId: "G-GK6E6PN81H"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+</script>
+<script>src="config.js"</script>
+<script type="text/javascript">
+let proxylinks = ["http://proxy.40225143.qpc.hal.davecutting.uk/",  "http://proxy2.40225143.qpc.hal.davecutting.uk/", "http://proxy3.40225143.qpc.hal.davecutting.uk/"];
+//const proxylinks = [urls.proxylink1, urls.proxylink2, urls.proxylink3, urls.proxylink4];
 
 
 function disableAllButtons()
@@ -28,6 +48,44 @@ function enableAllButtons()
     
 }
 
+function saveText()
+{
+    //event.preventDefault()
+    var id;
+    var user_input = document.getElementById('content').value
+    var storageRef = firebase.firestore().collection('storage')
+    storageRef.add({
+       text : user_input
+    }).then((docRef)=>{
+        id = docRef.id
+        document.getElementById('ids').value = docRef.id
+    });
+}
+
+function loadText()
+{
+    var id = document.getElementById('ids').value
+    if (id != '')
+    {
+        var docRef = firebase.firestore().collection("storage").doc(document.getElementById('ids').value);
+        docRef.get().then(function (doc) {
+        if (doc.exists) {
+            document.getElementById('content').value = doc.data().text
+            console.log("Document data:", doc.data().text);
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+    }
+    else{
+        alert("Please Enter a Valid ID to Load in Text")
+    }
+}
+
+
 function proxy(operation, link)
 {
     disableAllButtons();
@@ -43,7 +101,6 @@ function proxy(operation, link)
                 document.getElementById('output').value = j.answer;
                 enableAllButtons();
             }
-            
         }
         if (this.readyState == 4 && this.status != 200) {
             var j = this.response;
@@ -52,14 +109,14 @@ function proxy(operation, link)
                 if (operation == "andcount")
                 {
                     alert(j.Text);
+                    document.getElementById('output').value = "";
                     enableAllButtons();
                 }
                 else{
                     alert(j.text);
+                    document.getElementById('output').value = "";
                     enableAllButtons();
                 }
-                
-                
             }
             else{
                 proxylinks.splice(0,1);
@@ -234,6 +291,11 @@ body  {
 <div id="editor">
     <div id="logo">
         QUBeditotron3000
+    </div>
+    <div>
+        <button type="submit" onclick="saveText()">SAVE TEXT</button>
+        <button type="submit" onclick="loadText()">LOAD TEXT</button>
+        <input type="text" id="ids" value="" />
     </div>
     <div>
         <textarea rows="5" cols="40" id="content">It was the best of cloud, it was the worst of cloud...</textarea>
